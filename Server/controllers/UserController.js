@@ -1,4 +1,5 @@
 const { signToken } = require("../helpers/jwt");
+const bcrypt = require('../helpers/bcrypt');
 
 
 //class UserController
@@ -35,6 +36,42 @@ class UserController {
             }
             const newUser = await User.create({username,email,password});
             res.status(201).json(newUser);
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    //method to edit existing user data
+    static async updateUser(req, res, next) {
+        try {
+            //get user data from request.user
+            const user = req.user;
+            //get updated user data from request.body
+            const {username,email,password} = req.body;
+
+            if (!email || !username || !password) {
+                return res.status(400).json({ message: 'All fields are required' });
+            }
+            const hashedPassword = bcrypt.hashPassword(password);
+            
+            await user.update({
+                email: email,
+                username: username,
+                password: hashedPassword
+                });
+            res.status(200).json(user);
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    //method to delete loggedin user
+    static async deleteUser(req, res, next) {
+        try {
+            //get user data from request.user
+            const user = req.user;
+            await user.destroy();
+            res.status(200).json({ message: 'User deleted successfully' });
         } catch (error) {
             next(error)
         }

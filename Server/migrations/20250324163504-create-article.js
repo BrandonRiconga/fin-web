@@ -13,11 +13,23 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      description: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       content: {
         allowNull: false,
         type: Sequelize.STRING
       },
       url: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      publishedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      imageUrl: {
         allowNull: false,
         type: Sequelize.STRING
       },
