@@ -15,9 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Article, {
         foreignKey: 'userId'
       })
-      User.hasMany(models.NewsPreference , {
-        foreignKey: 'userId'
-      })
     }
   }
   User.init({
