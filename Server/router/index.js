@@ -8,9 +8,12 @@ const authorization = require('../middleware/authorization');
 const router = express.Router();
 
 //public routes
-router.get('/')
+router.get('/', Controllers.getNews)
 router.post('/login', UserController.login)
 router.post('/register', UserController.register)
+router.post('/ask', Controllers.handleGemini)
+router.get('/stock', Controllers.getStock)
+router.get('/crypto', Controllers.getCryptoCurrency)
 //authentication middleware
 router.use(authentication)
 
@@ -20,8 +23,8 @@ router.put('/profile', UserController.updateUser)
 router.delete('/profile', UserController.deleteUser)
 
 //article routes
-router.post('/ask', Controllers.handleGemini)
-router.post('/:id', Controllers.saveArticle)
+
+router.post('/save/:id', Controllers.saveArticle)
 router.get('/myArticle', Controllers.getArticle)
 router.get('/myArticle/:id', Controllers.getDetailArticle)
 router.delete('/myArticle/:id', authorization, Controllers.deleteArticle)

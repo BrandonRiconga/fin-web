@@ -18,7 +18,7 @@ async function authentication(req, res, next) {
         }
         const token = authorizationText[1];
         //get user data from database
-        const user = await User.findOne({where: {email: verifyToken(token).email}});
+        const user = await User.findOne({where: {id: verifyToken(token).id}});
         //check if user exists
         if (!user) {
             //if user does not exist, send error message
@@ -28,6 +28,7 @@ async function authentication(req, res, next) {
         req.user = user;
         next();
     } catch (error) {
+        console.log(error)
         next(error);
     }
 }

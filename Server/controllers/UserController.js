@@ -1,6 +1,6 @@
 const { signToken } = require("../helpers/jwt");
-const bcrypt = require('../helpers/bcrypt');
-
+const {hashPassword, verifyPassword} = require('../helpers/bcrypt');
+const {User} = require('../models');
 
 //class UserController
 class UserController {
@@ -12,6 +12,10 @@ class UserController {
             //check if user exists
             if (!email || !password) {
                 //if user does not exist, send error message}
+                throw {name: 'Unauthorized', message: 'Invalid email or password'};
+            }
+            const user = await User.findOne({where: {email: email}});
+            if (!user) {
                 throw {name: 'Unauthorized', message: 'Invalid email or password'};
             }
             const pwValid = await verifyPassword(password, user.password);
@@ -29,12 +33,17 @@ class UserController {
         try {
             //get user data
             const {username,email,password} = req.body;
+            console.log(req.body)
             //check if user exists
             if (!username || !email || !password) {
                 //if user does not exist, send error message}
                 throw {name: 'Bad Request', message: 'Invalid email, username or password'};
             }
-            const newUser = await User.create({username,email,password});
+            const newUser = await User.create({
+                username:username,
+                email:email,
+                password:password
+            });
             res.status(201).json(newUser);
         } catch (error) {
             next(error)
@@ -44,15 +53,17 @@ class UserController {
     //method to edit existing user data
     static async updateUser(req, res, next) {
         try {
-            //get user data from request.user
-            const user = req.user;
-            //get updated user data from request.body
             const {username,email,password} = req.body;
-
+            const user = await User.findOne({where: {id: req.user.id}});
+            if (!user) {
+                throw {name: 'Forbidden', message: 'Forbidden access'};
+            }
+            //get updated user data from request.body
+            
             if (!email || !username || !password) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
-            const hashedPassword = bcrypt.hashPassword(password);
+            const hashedPassword = hashPassword(password);
             
             await user.update({
                 email: email,
@@ -61,6 +72,7 @@ class UserController {
                 });
             res.status(200).json(user);
         } catch (error) {
+            console.log(error)
             next(error)
         }
     }
@@ -70,6 +82,10 @@ class UserController {
         try {
             //get user data from request.user
             const user = req.user;
+            if(!user) {
+                throw {name: 'Forbidden', message: 'Forbidden access'};
+            }
+            //delete user data
             await user.destroy();
             res.status(200).json({ message: 'User deleted successfully' });
         } catch (error) {
