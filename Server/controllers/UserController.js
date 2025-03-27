@@ -1,6 +1,9 @@
+require('dotenv').config();
 const { signToken } = require("../helpers/jwt");
 const {hashPassword, verifyPassword} = require('../helpers/bcrypt');
 const {User} = require('../models');
+const {OAuth2Client} = require('google-auth-library');
+const { defaults } = require('../helpers/axios');
 
 //class UserController
 class UserController {
@@ -29,11 +32,39 @@ class UserController {
         }
     }
 
+    static async loginGoogle(req, res, next) {
+        try {
+            const {googleToken} = req.body;
+
+            const client = new OAuth2Client();
+            const ticket = await client.verifyIdToken({
+                idToken: googleToken,
+                audience: process.env.GOOGLE_API_KEY,
+            });
+            const payload = ticket.getPayload();
+            const [user] = await User.findOrCreate({
+                where: {
+                    email: payload.email
+                },
+                defaults: {
+                    username: payload.name,
+                    email: payload.email,
+                    password: Math.random().toString(36).slice(-8)
+                }
+            });
+            const access_token = signToken({id: user.id});
+            res.json({access_token})
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
     static async register(req, res, next) {
         try {
             //get user data
             const {username,email,password} = req.body;
-            console.log(req.body)
+
             //check if user exists
             if (!username || !email || !password) {
                 //if user does not exist, send error message}
@@ -72,7 +103,6 @@ class UserController {
                 });
             res.status(200).json(user);
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
@@ -88,6 +118,20 @@ class UserController {
             //delete user data
             await user.destroy();
             res.status(200).json({ message: 'User deleted successfully' });
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    //method to get loggedin user data
+    static async getUser(req, res, next) {
+        try {
+            //get user data from request.user
+            const user = req.user;
+            if(!user) {
+                throw {name: 'Forbidden', message: 'Forbidden access'};
+            }
+            res.status(200).json(user);
         } catch (error) {
             next(error)
         }

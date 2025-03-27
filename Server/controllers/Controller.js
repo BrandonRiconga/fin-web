@@ -1,25 +1,29 @@
 const { Article } = require('../models');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const axios = require('axios');
 const http = require('../helpers/axios');
-const { response } = require('express');
 
 class Controllers {
     static async saveArticle(req, res, next) {
         try {
-            const { userId, title, description, url, published_at, content, image_url } = req.body;
-            if (!userId || !title || !description || !url || !published_at || !content || !image_url) {
+            const { userId, author, title, description, url, publishedAt, content, imageUrl } = req.body;
+            if (!userId && !author && !title && !description && !url && !publishedAt && !content && !imageUrl) {
                 throw {name: 'Not Found', message: 'Article not found'};
             }
+            const checkArticle = await Article.findOne({ where: { url: url } });
+            if (checkArticle) {
+                throw {name: 'Bad Request', message: 'Article already saved'};
+            }
+            const newContent = content.split('[+')[0];
 
             await Article.create({
-                userId : userId,
+                userId : req.user.id,
+                author : author,
                 title : title,
                 description : description,
                 url : url,
-                publishedAt : published_at,
-                imageUrl : image_url,
-                content : content
+                publishedAt : publishedAt,
+                imageUrl : imageUrl,
+                content : newContent
             });
             res.status(200).json({message: 'Article saved successfully'});
         } catch (error) {
@@ -36,20 +40,6 @@ class Controllers {
                 attributes: { exclude: ['password'] }
             });
             res.status(200).json(articles);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    //method to get detail of saved article from loggedin user
-    static async getDetailArticle (req, res, next) {
-        try {
-            const article = await Article.findOne({
-                where: { id: req.params.id },
-                include: 'User',
-                attributes: { exclude: ['password'] }
-            });
-            res.status(200).json(article);
         } catch (error) {
             next(error);
         }
@@ -93,7 +83,6 @@ class Controllers {
 
             res.status(200).json({ message });
         } catch (error) {
-            console.log(error)
             next(error);
         }
     }
@@ -106,8 +95,8 @@ class Controllers {
                 url: 'https://newsapi.org/v2/top-headlines',
                 params:{
                     q: 'stock',
-                    country: 'us',
                     pageSize: 5,
+                    sortBy: 'popularity',
                     apiKey: process.env.NEWS_API_KEY
                 }
             })
@@ -115,9 +104,8 @@ class Controllers {
             if(newsData.length === 0){
                 throw {name: 'Not Found', message: 'News not found'};
             }
-            res.status(200).json({newsData});
+            res.status(200).json(newsData);
         } catch (error) {
-            console.log(error)
             next(error);
         }
     }
@@ -149,7 +137,6 @@ class Controllers {
                     });
                 }
             }
-            console.log(StockCollection, '<<< StockResponse.data')
             res.status(200).json(StockCollection);
         }
         catch(error){
@@ -180,11 +167,9 @@ class Controllers {
                     cryptoCollection.push(cryptoData);
                 }
             }
-            console.log(cryptoCollection, '<<< cryptoCollection')
             res.status(200).json(cryptoCollection);
         } catch (error) {
             next(error);
-            
         }
     }
 }
