@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const http = axios.create({
-    baseURL: 'http://localhost:3000/'
+    baseURL: 'https://www.brandonriconga.my.id/'
 });
 
 module.exports = http;
