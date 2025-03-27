@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import http from '../helpers/axios';
 import Navbar from '../component/navbar';
 import ArticleCard from '../component/article-card';
+import FinanceChatbot from '../component/chatbot';
 
 function Home(){
     const [stockData, setStockData] = useState([]);
@@ -23,7 +24,6 @@ function Home(){
                 url: '/stocks'
             });
             const responseData = response.data;
-            console.log(responseData);
             setStockData(responseData);
         } catch (error) {
             console.log(error);
@@ -37,7 +37,6 @@ function Home(){
                 url: '/crypto'
             });
             const responseData = response.data;
-            console.log(responseData);
             setCryptoData(responseData);
         } catch (error) {
             console.log(error);
@@ -51,7 +50,6 @@ function Home(){
                 url: '/news'
             });
             const responseData = response.data;
-            console.log(responseData);
             setNewsData(responseData);
         } catch (error) {
             console.log(error);
@@ -60,14 +58,14 @@ function Home(){
 
     useEffect(() => {
         fetchArticleData();
-        // fetchStockData();
-        // fetchCryptoData();
-        // setInterval(fetchStockData, 600000)
-        // setInterval(fetchCryptoData, 600000)
-        // return ()=>{
-        //     clearInterval(fetchStockData);
-        //     clearInterval(fetchCryptoData);
-        // }
+        fetchStockData();
+        fetchCryptoData();
+        setInterval(fetchStockData, 600000)
+        setInterval(fetchCryptoData, 600000)
+        return ()=>{
+            clearInterval(fetchStockData);
+            clearInterval(fetchCryptoData);
+        }
     }, []);
 
     return(
@@ -87,8 +85,8 @@ function Home(){
                 {newsData.map((news,index)=>(
                     <ArticleCard key={index} data={news}/>
                 ))}
-                
             </div>
+            <FinanceChatbot />
         </>
         
         

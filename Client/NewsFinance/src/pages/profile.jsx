@@ -27,7 +27,6 @@ function Profile(){
                 }
             });
             const profileData = response.data;
-            console.log(response.data);
             setProfile(profileData);
 
             setEmail(profileData.email);
@@ -54,7 +53,6 @@ function Profile(){
                 }
             });
             const profileData = response.data;
-            console.log(response.data);
             setProfile(profileData);
             setFormVisible(false);
             Swal.fire({
@@ -87,7 +85,6 @@ function Profile(){
                             'Authorization': `Bearer ${token}`
                         }
                     });
-                    console.log(response.data);
                     Swal.fire({
                         title: 'Success',
                         text: 'Profile Deleted',

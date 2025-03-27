@@ -4,7 +4,6 @@ import Swal from 'sweetalert2';
 import http from '../helpers/axios';
 import { useEffect } from 'react';
 function MyArticleCard({data, handleMyArticle}) {
-    console.log(data)
     const formattedDate = new Date(data.publishedAt).toLocaleDateString('en-GB');
     const handleDelete = async() => {
         try {
@@ -16,7 +15,6 @@ function MyArticleCard({data, handleMyArticle}) {
                     icon: 'error'
                 });
             }
-            console.log(data, '<<< news data')
             await http({
                 method: 'DELETE',
                 url: `/myArticle/${data.id}`,
