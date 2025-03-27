@@ -9,6 +9,8 @@ function Home(){
     const [stockData, setStockData] = useState([]);
     const [cryptoData, setCryptoData] = useState([]);
     const [newsData, setNewsData] = useState([]);
+    const [isLoadingStock, setIsLoadingStock] = useState(true);
+    const [isLoadingCrypto, setIsLoadingCrypto] = useState(true);
 
     const formatStockData = (stocks) => {
         return stocks.map(stock => `${stock.symbol} : ${stock.price}`).join(' | ');
@@ -19,27 +21,33 @@ function Home(){
 
     const fetchStockData = async () => {
         try {
+            setIsLoadingStock(true);
             const response = await http({
                 method: 'GET',
                 url: '/stocks'
             });
             const responseData = response.data;
             setStockData(responseData);
+            setIsLoadingStock(false);
         } catch (error) {
             console.log(error);
+            setIsLoadingStock(false);
         }
     }
 
     const fetchCryptoData = async () => {
         try {
+            setIsLoadingCrypto(true);
             const response = await http({
                 method: 'GET',
                 url: '/crypto'
             });
             const responseData = response.data;
             setCryptoData(responseData);
+            setIsLoadingCrypto(false);
         } catch (error) {
             console.log(error);
+            setIsLoadingCrypto(false);
         }
     }
 
@@ -60,11 +68,11 @@ function Home(){
         fetchArticleData();
         fetchStockData();
         fetchCryptoData();
-        setInterval(fetchStockData, 600000)
-        setInterval(fetchCryptoData, 600000)
+        const stockInterval = setInterval(fetchStockData, 600000)
+        const cryptoInterval = setInterval(fetchCryptoData, 600000)
         return ()=>{
-            clearInterval(fetchStockData);
-            clearInterval(fetchCryptoData);
+            clearInterval(stockInterval);
+            clearInterval(cryptoInterval);
         }
     }, []);
 

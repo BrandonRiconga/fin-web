@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const http = axios.create({
-    baseURL: 'https://www.brandonriconga.my.id/',
+    baseURL: 'http://localhost:3000/',
     timeout: 10000
 });
 

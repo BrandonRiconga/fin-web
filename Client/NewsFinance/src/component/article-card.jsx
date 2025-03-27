@@ -5,7 +5,14 @@ import http from '../helpers/axios';
 function ArticleCard(news) {
     const navigate = useNavigate();
     const formattedDate = new Date(news.data.publishedAt).toLocaleDateString('en-GB');
-    const formattedContent = news.data.content.split('[+')[0];
+    let formattedContent 
+    if(news.data.content){
+        formattedContent = news.data.content.split('[+')[0];
+    }
+    else{
+        formattedContent = '';
+    }
+    
 
     const handleBookmark = async() => {
         try {
