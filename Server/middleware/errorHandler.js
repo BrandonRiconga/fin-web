@@ -8,16 +8,16 @@ function errorHandler(err, req, res, next) {
     if(err.name === 'Unauthorized') {
         res.status(401).json({message: err.message});
     }
-    if(err.name === 'NotFound') {
+    if(err.name === 'Not Found' || err.name === 'NotFound') {
         res.status(404).json({message: err.message});
     }
     if(err.name === 'Forbidden') {
         res.status(403).json({message: err.message});
     }
-    if(err.name === 'BadRequest') {
+    if(err.name === 'Bad Request' || err.name === 'BadRequest') {
         res.status(400).json({message: err.message});
     }
-    if(err.name === 'InternalServerError') {
+    else{
         res.status(500).json({message: err.message});
     }
 }

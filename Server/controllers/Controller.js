@@ -67,9 +67,13 @@ class Controllers {
     static async handleGemini (req, res, next) {
         try {
             const {question} = req.body;
+            if(!question){
+                throw {name: 'Bad Request', message: 'Please ask a question'};
+            }
             const financeKeywords = ['stocks', 'investments', 'finance', 'economy', 'market', 'currency', 'tax', 'financial', 'trading', 'bonds', 'shares', 'dividends', 'capital', 'market', 'equity', 'portfolio', 'asset', 'liability', 'income', 'expense', 'profit', 'loss', 'revenue', 'debt', 'credit', 'loan', 'interest', 'rate', 'inflation', 'deflation', 'recession', 'depression', 'boom', 'bust', 'bull', 'bear', 'market', 'stock', 'exchange', 'bond', 'mutual', 'fund', 'index', 'option', 'future', 'commodity', 'derivative', 'hedge', 'fund', 'private', 'equity', 'venture', 'capital', 'angel', 'investor', 'crowdfunding', 'initial', 'public', 'offering', 'IPO', 'merger', 'acquisition', 'takeover', 'divestiture', 'spinoff', 'joint', 'venture', 'partnership', 'corporation', 'company', 'firm', 'business', 'enterprise', 'organization', 'institution', 'government', 'regulation', 'policy', 'law', 'rule', 'taxation', 'audit', 'accounting', 'financial', 'statement', 'balance', 'sheet', 'income', 'statement', 'cash', 'flow', 'statement', 'valuation', 'discounted', 'cash', 'flow', 'DCF', 'net', 'present', 'value', 'NPV', 'internal', 'rate', 'return', 'IRR', 'return', 'investment', 'ROI', 'risk', 'return', 'risk', 'free', 'rate', 'beta', 'alpha', 'standard', 'deviation', 'variance', 'correlation', 'covariance', 'diversification', 'hedging', 'arbitrage', 'speculation', 'technical', 'analysis', 'fundamental', 'analysis', 'efficient', 'market', 'hypothesis', 'random', 'walk', 'theory', 'behavioral', 'finance', 'value', 'investing', 'growth', 'investing', 'momentum', 'investing', 'contrarian', 'investing', 'income', 'investing', 'index', 'investing', 'passive', 'investing', 'active', 'investing', 'day', 'trading', 'swing', 'trading', 'price']
             const isFinanceRelated = financeKeywords.some(keyword => question.toLowerCase().includes(keyword));
             //check if the question is finance related
+            
             if(!isFinanceRelated){
                 throw {name: 'Bad Request', message: 'Please ask a finance related question'};
             }

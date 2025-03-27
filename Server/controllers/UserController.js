@@ -15,15 +15,15 @@ class UserController {
             //check if user exists
             if (!email || !password) {
                 //if user does not exist, send error message}
-                throw {name: 'Unauthorized', message: 'Invalid email or password'};
+                throw {name: 'BadRequest', message: 'Email, and Password must be filled!'};
             }
             const user = await User.findOne({where: {email: email}});
             if (!user) {
-                throw {name: 'Unauthorized', message: 'Invalid email or password'};
+                throw {name: 'Unauthorized', message: 'Invalid Email/Password'};
             }
             const pwValid = await verifyPassword(password, user.password);
             if (!pwValid) {
-                throw {name: 'Unauthorized', message: 'Invalid email or password'};
+                throw {name: 'Unauthorized', message: 'Invalid Email/Password'};
             }
             const access_token = signToken({id: user.id});
             res.status(200).json({access_token});
@@ -53,7 +53,7 @@ class UserController {
                 }
             });
             const access_token = signToken({id: user.id});
-            res.json({access_token})
+            res.status(200).json({access_token})
 
         } catch (error) {
             next(error)
@@ -68,7 +68,7 @@ class UserController {
             //check if user exists
             if (!username || !email || !password) {
                 //if user does not exist, send error message}
-                throw {name: 'Bad Request', message: 'Invalid email, username or password'};
+                throw {name: 'BadRequest', message: 'Invalid email, username or password'};
             }
             const newUser = await User.create({
                 username:username,
