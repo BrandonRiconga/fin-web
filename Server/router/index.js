@@ -6,6 +6,7 @@ const errorHandler = require('../middleware/errorHandler');
 const authentication = require('../middleware/authentication');
 const authorization = require('../middleware/authorization');
 const router = express.Router();
+require('dotenv').config();
 
 //public routes
 router.get('/news', Controllers.getNews)
