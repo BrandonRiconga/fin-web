@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-function http(){
-    return axios.create({
-        baseURL: 'http://localhost:3000/'
-    });
-}
+const http = axios.create({
+    baseURL: 'http://localhost:3000/',
+    timeout: 10000
+});
 
 export default http;

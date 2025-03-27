@@ -1,0 +1,9 @@
+.login-button-div{
+    display: flex;
+    justify-content: flex-end;
+}
+.profile-logout-div{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
