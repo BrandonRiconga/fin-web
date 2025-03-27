@@ -30,11 +30,6 @@ function FinanceChatbot() {
         } catch (error) {
             console.error(error);
             setLoading(false);
-            Swal.fire({
-                title: 'Error',
-                text: 'Something went wrong with your request.',
-                icon: 'error'
-            });
         }
     };
 
